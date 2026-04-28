@@ -99,8 +99,8 @@ public:
 		centroid = Eigen::Vector3f(0, 0, 0);
 		nPoints = 0;
 
-		cloud->Process(1024, std::bind(&BasicProcessing::AccumulateBbxCentroid < TVertex >, this, placeholders::_1,
-			placeholders::_2, placeholders::_3, placeholders::_4), nullptr, true);
+		cloud->Process(1024, std::bind(&BasicProcessing::AccumulateBbxCentroid < TVertex >, this, std::placeholders::_1,
+			std::placeholders::_2, std::placeholders::_3, std::placeholders::_4), nullptr, true);
 	}
 		
 	
@@ -116,7 +116,7 @@ public:
 		this->sliceWidth = sliceWidth;
 		sliceSize = 0;
 
-		cloud->Process(16384, std::bind(&BasicProcessing::findSliceSize < TVertex >, this, placeholders::_1, placeholders::_2, placeholders::_3, placeholders::_4), nullptr, false);
+		cloud->Process(16384, std::bind(&BasicProcessing::findSliceSize < TVertex >, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4), nullptr, false);
 
 		if (sliceSize == 0)
 			return cloud->NumberOfPoints();

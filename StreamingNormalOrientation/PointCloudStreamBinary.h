@@ -128,8 +128,8 @@ public:
 
 			Process(
 				blockSize / sizeof(TVertex) / nProcessors,
-				std::bind(&CovarianceCalculator::PrepareCovariance, &covCalc, placeholders::_1),
-				std::bind(&CovarianceCalculator::AccumulateCovariance, &covCalc, placeholders::_1, placeholders::_2, placeholders::_3, placeholders::_4), nullptr, true);
+				std::bind(&CovarianceCalculator::PrepareCovariance, &covCalc, std::placeholders::_1),
+				std::bind(&CovarianceCalculator::AccumulateCovariance, &covCalc, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4), nullptr, true);
 
 			//Accumulate the partial covariances
 			covCalc.AccumulateCovariances();
@@ -218,7 +218,7 @@ private:
 		sortChunks = 0;
 		Process(
 			sortVerticesPerChunk,
-			std::bind(&PointCloudStreamBinary<TVertex>::BinVertices, this, placeholders::_1, placeholders::_2, placeholders::_3, placeholders::_4), &cr, true);
+			std::bind(&PointCloudStreamBinary<TVertex>::BinVertices, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4), &cr, true);
 
 		//Merge
 		int mergeLevel = 1;

@@ -148,7 +148,7 @@ public:
 		BbxCentroidAccumulator acc;
 
 		std::shared_ptr<PointCloudStreamBinary<TVertex>> binary = ConvertToBinary(binaryFilename,
-			std::bind(&BbxCentroidAccumulator::AccumulateBbxAndCentroidAscii, &acc, placeholders::_1));
+			std::bind(&BbxCentroidAccumulator::AccumulateBbxAndCentroidAscii, &acc, std::placeholders::_1));
 		
 		binary->PrepareForStreaming(acc.bbxMin, acc.bbxMax, acc.centroid, realign);
 

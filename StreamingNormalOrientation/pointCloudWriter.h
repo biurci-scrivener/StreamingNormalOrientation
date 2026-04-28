@@ -19,7 +19,7 @@ public:
 	{
 		std::ofstream fileStream(filenameOut);
 
-		cloud->Process(1000, std::bind(&PointCloudWriter::writeToXYZ<TVertex>, this, placeholders::_1, placeholders::_2, placeholders::_3, placeholders::_4, std::ref(fileStream)), nullptr, false);
+		cloud->Process(1000, std::bind(&PointCloudWriter::writeToXYZ<TVertex>, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::ref(fileStream)), nullptr, false);
 		fileStream.close();
 	}
 
@@ -37,7 +37,7 @@ public:
 		fileStream
 			<< "end_header" << endl;
 
-		cloud->Process(1000, std::bind(&PointCloudWriter::writeToXYZ<TVertex>, this, placeholders::_1, placeholders::_2, placeholders::_3, placeholders::_4, std::ref(fileStream)), nullptr, false);
+		cloud->Process(1000, std::bind(&PointCloudWriter::writeToXYZ<TVertex>, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::ref(fileStream)), nullptr, false);
 		fileStream.close();
 	}
 };
