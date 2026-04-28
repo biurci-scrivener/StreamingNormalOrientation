@@ -57,6 +57,6 @@ namespace nih {
 	typedef long long               int64;
 
 	//#define NIH_FORCE_INLINE __forceinline
-#define FORCE_INLINE __forceinline	
+#define FORCE_INLINE __forceinline__
 
 } // namespace nih
