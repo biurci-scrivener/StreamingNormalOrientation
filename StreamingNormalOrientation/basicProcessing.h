@@ -1,4 +1,9 @@
+#pragma once
+
 #include <mutex>
+
+template <typename TVertex>
+class PointCloudStreamBinary;
 
 class BasicProcessing
 {
