@@ -163,7 +163,11 @@ private:
 
 	inline std::string GetSortChunkFilename(int mergeLevel, int chunkNo)
 	{
-		return (sortChunkPrefix + std::to_string(mergeLevel) + std::string("_") + std::to_string(chunkNo) + std::string(".bin"));
+		std::string base = sortChunkPrefix + std::to_string(mergeLevel) + std::string("_") + std::to_string(chunkNo) + std::string(".bin");
+		boost::filesystem::path dir = boost::filesystem::path(filename).parent_path();
+		if (dir.empty())
+			return base;
+		return (dir / base).string();
 	}
 
 	// Processor method that re-aligns the vertices with a given centroid and rotation. Then, sorts the vertices and writes them to a temporary output file.
