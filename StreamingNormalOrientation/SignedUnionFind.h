@@ -26,7 +26,8 @@ public:
 		{
 			for (int i = 0; i < signs.size(); ++i)
 			{
-				fwrite(&signs[i], 1, 1, file);
+				unsigned char b = signs[i] ? 1 : 0;
+				fwrite(&b, 1, 1, file);
 			}
 		}
 		fclose(file);
@@ -51,7 +52,9 @@ public:
 		{
 			for (int i = 0; i < signs.size(); ++i)
 			{
-				fread(&signs[i], 1, 1, file);
+				unsigned char b = 0;
+				fread(&b, 1, 1, file);
+				signs[i] = (b != 0);
 			}
 		}
 		fclose(file);
