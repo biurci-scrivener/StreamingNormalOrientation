@@ -1,6 +1,7 @@
 #pragma once
 
 #include "OpenPointCloudStreamBinary.h"
+#include "basicProcessing.h"
 
 #include <string>
 #include <iostream>

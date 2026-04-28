@@ -15,9 +15,8 @@ include_directories("${QPBO_DIR}")
 set(LIBRARIES ${LIBRARIES} QPBO-opengm)
 
 find_package(Eigen3 REQUIRED)
-include_directories(${EIGEN3_INCLUDE_DIR})
 
-find_package(Boost REQUIRED COMPONENTS thread system filesystem)
+find_package(Boost REQUIRED COMPONENTS thread filesystem)
 include_directories(${Boost_INCLUDE_DIRS})
 set(LIBRARIES ${LIBRARIES} ${Boost_LIBRARIES})
 
@@ -99,9 +98,14 @@ add_definitions(-DIL_STD)
 add_definitions(-DWITH_BOOST_GRAPH)
 add_definitions(-DWITH_BOOST)
 add_definitions(-DEIGEN_DONT_PARALLELIZE)
-add_definitions(-std=c++14)
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Allow specialization of templates in different namespaces
 add_definitions(-fpermissive)
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+	message("Clang detected")
+    add_compile_options(-Wno-error=instantiation-after-specialization)
+endif()
 
 if(USE_CUDA)
 	cuda_add_executable( StreamingNormalOrientation ${SOURCES})
@@ -112,4 +116,4 @@ if(MSVC)
 	SET_TARGET_PROPERTIES( StreamingNormalOrientation PROPERTIES LINK_FLAGS "/LIBPATH:${Boost_LIBRARY_DIRS} /LIBPATH:${MAXFLOW_LIBRARY_DIR}" )
 endif()
 
-target_link_libraries(StreamingNormalOrientation ${LIBRARIES})
+target_link_libraries(StreamingNormalOrientation ${LIBRARIES} Eigen3::Eigen)
