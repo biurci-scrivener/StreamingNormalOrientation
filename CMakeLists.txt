@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.0)
+cmake_minimum_required (VERSION 3.18)
 project (Streaming_Normal_Orientation)
 
 option (USE_CUDA "Enable normal estimation via CUDA" OFF)
@@ -71,11 +71,15 @@ set (SOURCES  	StreamingNormalOrientation StreamingNormalOrientation/basicProces
 
 if(USE_CUDA)
 	add_definitions(-DWITH_CUDA)
-	
-	FIND_PACKAGE(CUDA REQUIRED)
 
-	set(CUDA_SEPARABLE_COMPILATION ON)
-	set(LIBRARIES ${LIBRARIES} ${CUDA_LIBRARIES})
+	enable_language(CUDA)
+	find_package(CUDAToolkit REQUIRED)
+
+	if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
+		set(CMAKE_CUDA_ARCHITECTURES 75 86)
+	endif()
+
+	set(LIBRARIES ${LIBRARIES} CUDA::cudart)
 
 	set(SOURCES 	${SOURCES}
 					StreamingNormalOrientation/nih/priority_queue.h
@@ -90,7 +94,7 @@ if(USE_CUDA)
 					StreamingNormalOrientation/MortonUtils.cuh
 					StreamingNormalOrientation/normalEstimation.cuh
 					StreamingNormalOrientation/MortonUtils.cu
-					StreamingNormalOrientation/normalEstimation.cu)	
+					StreamingNormalOrientation/normalEstimation.cu)
 endif(USE_CUDA)
 
 add_definitions(-DGATHER_STATISTICS)
@@ -107,10 +111,10 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     add_compile_options(-Wno-error=instantiation-after-specialization)
 endif()
 
+add_executable( StreamingNormalOrientation ${SOURCES})
 if(USE_CUDA)
-	cuda_add_executable( StreamingNormalOrientation ${SOURCES})
-else(USE_CUDA)
-	add_executable( StreamingNormalOrientation ${SOURCES})
+	set_target_properties(StreamingNormalOrientation PROPERTIES
+		CUDA_SEPARABLE_COMPILATION ON)
 endif(USE_CUDA)
 if(MSVC)
 	SET_TARGET_PROPERTIES( StreamingNormalOrientation PROPERTIES LINK_FLAGS "/LIBPATH:${Boost_LIBRARY_DIRS} /LIBPATH:${MAXFLOW_LIBRARY_DIR}" )
