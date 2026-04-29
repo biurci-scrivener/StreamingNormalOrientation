@@ -88,10 +88,12 @@ int main(int argc, const char* args[])
 		cout << "\t-thetaS %f      theta_S from paper." << endl;
 		cout << "\t-thetaAcc %f    theta_acc from paper." << endl;
 		cout << "\t-flipcrit [hoppe|xie]  flip criterion." << endl;
+		cout << "\t-out %s         directory for the final .ply output (intermediates go to <out>/intermediate)." << endl;
 		return -1;
 	}
 
 	std::string model(args[1]);
+	std::string outDir;
 	float searchRadius = 1.0f;
 	int neighborCount = 6;
 	typedef OrientationSolverMSTQPBO TSolver;
@@ -154,6 +156,11 @@ int main(int argc, const char* args[])
 			minAccumulatedVoteCertainty = (float)atof(args[i + 1]);
 			++i;
 		}
+		else if (strcmp(args[i], "-out") == 0 && i + 1 < argc)
+		{
+			outDir = args[i + 1];
+			++i;
+		}
 		else if (strcmp(args[i], "-flipcrit") == 0 && i + 1 < argc)
 		{
 			if (strcmp(args[i + 1], "hoppe") == 0)
@@ -193,12 +200,27 @@ int main(int argc, const char* args[])
 	Eigen::initParallel();
 
 	
+	boost::filesystem::path inputPath(model);
+	std::string baseName = inputPath.filename().string();
+	if (outDir.empty())
+	{
+		outDir = inputPath.parent_path().string();
+		if (outDir.empty())
+			outDir = ".";
+	}
+	std::string tmpDir = (boost::filesystem::path(outDir) / "intermediate").string();
+	boost::filesystem::create_directories(outDir);
+	boost::filesystem::create_directories(tmpDir);
+
+	std::string tmpBase = (boost::filesystem::path(tmpDir) / baseName).string();
+	std::string outBase = (boost::filesystem::path(outDir) / baseName).string();
+
 	auto inputName = model + ".ply";
-	auto binName = model + ".bin";
-	auto randomizedName = model + "RandomizedNormals.bin";
-	auto orientedName = model + "WithOrientedNormals";
-	auto optInput = model + "OptimizationInput.ply";
-	auto outputName = model + "WithOrientedNormals.ply";
+	auto binName = tmpBase + ".bin";
+	auto randomizedName = tmpBase + "RandomizedNormals.bin";
+	auto orientedName = tmpBase + "WithOrientedNormals";
+	auto optInput = tmpBase + "OptimizationInput.ply";
+	auto outputName = outBase + "WithOrientedNormals.ply";
 
 	try
 	{
@@ -240,8 +262,8 @@ int main(int argc, const char* args[])
 
 			cout << "Calculating normals..." << endl;
 
-			auto normalName = model + "Normals.bin";
-			auto cleanedName = model + "Cleaned.bin";
+			auto normalName = tmpBase + "Normals.bin";
+			auto cleanedName = tmpBase + "Cleaned.bin";
 
 			cloud = ne.estimateNormals<TVertex, TVertex>(cloud, normalName.c_str(), 4 * searchRadius, sliceSize, bp.bbxMin, bp.bbxMax);			
 
